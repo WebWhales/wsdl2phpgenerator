@@ -152,26 +152,33 @@ class Service implements ClassGenerator
         $this->class = new PhpClass($name, false, $this->config->get('soapClientClass'), $comment);
 
         // Create the constructor
-        $comment = new PhpDocComment();
-        $comment->addParam(PhpDocElementFactory::getParam('string', 'wsdl', 'The wsdl file to use'));
-        $comment->addParam(PhpDocElementFactory::getParam('array', 'options', 'A array of config values'));
+        //
+        // WW: add option to skip the Constructor of a service
+        //
+        if( $this->config->get('noServiceConstructor') === true )
+        {
+            // Create the constructor
+            $comment = new PhpDocComment();
+            $comment->addParam(PhpDocElementFactory::getParam('string', 'wsdl', 'The wsdl file to use'));
+            $comment->addParam(PhpDocElementFactory::getParam('array', 'options', 'A array of config values'));
 
-        $source = '
-  foreach (self::$classmap as $key => $value) {
-    if (!isset($options[\'classmap\'][$key])) {
-      $options[\'classmap\'][$key] = $value;
-    }
-  }' . PHP_EOL;
-        $source .= '  $options = array_merge(' . var_export($this->config->get('soapClientOptions'), true) . ', $options);' . PHP_EOL;
-        $source .= '  if (!$wsdl) {' . PHP_EOL;
-        $source .= '    $wsdl = \'' . $this->config->get('inputFile') . '\';' . PHP_EOL;
-        $source .= '  }' . PHP_EOL;
-        $source .= '  parent::__construct($wsdl, $options);' . PHP_EOL;
+            $source = '
+      foreach (self::$classmap as $key => $value) {
+        if (!isset($options[\'classmap\'][$key])) {
+          $options[\'classmap\'][$key] = $value;
+        }
+      }' . PHP_EOL;
+            $source .= '  $options = array_merge(' . var_export($this->config->get('soapClientOptions'), true) . ', $options);' . PHP_EOL;
+            $source .= '  if (!$wsdl) {' . PHP_EOL;
+            $source .= '    $wsdl = \'' . $this->config->get('inputFile') . '\';' . PHP_EOL;
+            $source .= '  }' . PHP_EOL;
+            $source .= '  parent::__construct($wsdl, $options);' . PHP_EOL;
 
-        $function = new PhpFunction('public', '__construct', 'array $options = array(), $wsdl = null', $source, $comment);
+            $function = new PhpFunction('public', '__construct', 'array $options = array(), $wsdl = null', $source, $comment);
 
-        // Add the constructor
-        $this->class->addFunction($function);
+            // Add the constructor
+            $this->class->addFunction($function);
+        }
 
         // Generate the classmap
         $name = 'classmap';
@@ -184,7 +191,10 @@ class Service implements ClassGenerator
                 $init[$type->getIdentifier()] = $this->config->get('namespaceName') . "\\" . $type->getPhpIdentifier();
             }
         }
-        $var = new PhpVariable('private static', $name, var_export($init, true), $comment);
+        //
+        // Changed from private to protected
+        //
+        $var = new PhpVariable('protected static', $name, var_export($init, true), $comment);
 
         // Add the classmap variable
         $this->class->addVariable($var);
