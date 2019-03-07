@@ -125,7 +125,6 @@ class Config implements ConfigInterface
      */
     protected function normalizeArray(Options $options, $value)
     {
-        var_dump( $value );
         if (strlen($value) === 0) {
             return array();
         }
