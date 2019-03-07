@@ -77,10 +77,16 @@ class Config implements ConfigInterface
             'proxy'                         => false,
 
             // WW : added
+            // Sets the Base Class for the generated service
             'serviceBaseClass'              => null,
+            // Overrides the name of the class for the generated service @todo
+            'serviceClassName'              => null,
+            // specfiy whether to generate the service class as an abstract class @todo
+            'serviceClassIsAbstract'        => false,
+            // if true, does not render a (soapclient) constructor
             'noServiceConstructor'          => false,
+            // Add the return type for the operation methods in the Service class
             'useOperationReturnType'        => false,
-            'forceCaseOperationReturnType'  => false,
         ));
 
         // A set of configuration options names and normalizer callables.
@@ -119,6 +125,7 @@ class Config implements ConfigInterface
      */
     protected function normalizeArray(Options $options, $value)
     {
+        var_dump( $value );
         if (strlen($value) === 0) {
             return array();
         }

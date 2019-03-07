@@ -151,13 +151,14 @@ class Service implements ClassGenerator
         $comment = new PhpDocComment($this->description);
         // WW: add alternate baseclass
         $baseClass = $this->config->get('serviceBaseClass') ? $this->config->get('serviceBaseClass') : $this->config->get('soapClientClass');
-        $this->class = new PhpClass($name, false, $baseClass, $comment);
+        $isAbstract = ( $this->config->get('serviceClassIsAbstract') == true );
+        $this->class = new PhpClass($name, false, $baseClass, $comment, false, $isAbstract);
 
         // Create the constructor
         //
         // WW: add option to skip the Constructor of a service
         //
-        if( $this->config->get('noServiceConstructor') === true )
+        if( $this->config->get('noServiceConstructor') !== true )
         {
             // Create the constructor
             $comment = new PhpDocComment();
