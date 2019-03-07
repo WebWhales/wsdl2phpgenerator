@@ -149,7 +149,9 @@ class Service implements ClassGenerator
 
         // Create the class object
         $comment = new PhpDocComment($this->description);
-        $this->class = new PhpClass($name, false, $this->config->get('soapClientClass'), $comment);
+        // WW: add alternate baseclass
+        $baseClass = $this->config->get('serviceBaseClass') ? $this->config->get('serviceBaseClass') : $this->config->get('soapClientClass');
+        $this->class = new PhpClass($name, false, $baseClass, $comment);
 
         // Create the constructor
         //
@@ -202,9 +204,11 @@ class Service implements ClassGenerator
         // Add all methods
         foreach ($this->operations as $operation) {
             $name = Validator::validateOperation($operation->getName());
+    
+            $returnType = PhpDocElementFactory::getReturn($operation->getReturns(), '');
 
             $comment = new PhpDocComment($operation->getDescription());
-            $comment->setReturn(PhpDocElementFactory::getReturn($operation->getReturns(), ''));
+            $comment->setReturn($returnType);
 
             foreach ($operation->getParams() as $param => $hint) {
                 $arr = $operation->getPhpDocParams($param, $this->types);
@@ -215,7 +219,7 @@ class Service implements ClassGenerator
 
             $paramStr = $operation->getParamString($this->types);
 
-            $function = new PhpFunction('public', $name, $paramStr, $source, $comment);
+            $function = new PhpFunction('public', $name, $paramStr, $source, $comment,$returnType);
 
             if ($this->class->functionExists($function->getIdentifier()) == false) {
                 $this->class->addFunction($function);

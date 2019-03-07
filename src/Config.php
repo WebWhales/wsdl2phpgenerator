@@ -77,6 +77,7 @@ class Config implements ConfigInterface
             'proxy'                         => false,
 
             // WW : added
+            'serviceBaseClass'              => null,
             'noServiceConstructor'          => false,
         ));
 
