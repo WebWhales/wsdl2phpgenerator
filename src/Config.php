@@ -79,6 +79,8 @@ class Config implements ConfigInterface
             // WW : added
             'serviceBaseClass'              => null,
             'noServiceConstructor'          => false,
+            'useOperationReturnType'        => false,
+            'forceCaseOperationReturnType'  => false,
         ));
 
         // A set of configuration options names and normalizer callables.

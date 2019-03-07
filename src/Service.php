@@ -205,20 +205,30 @@ class Service implements ClassGenerator
         foreach ($this->operations as $operation) {
             $name = Validator::validateOperation($operation->getName());
     
-            $returnType = $operation->getReturns();
+            
 
             $comment = new PhpDocComment($operation->getDescription());
-            $comment->setReturn(PhpDocElementFactory::getReturn($returnType, ''));
+            $comment->setReturn(PhpDocElementFactory::getReturn($operation->getReturns(), ''));
 
             foreach ($operation->getParams() as $param => $hint) {
                 $arr = $operation->getPhpDocParams($param, $this->types);
                 $comment->addParam(PhpDocElementFactory::getParam($arr['type'], $arr['name'], $arr['desc']));
             }
 
-            $source = '  return $this->__soapCall(\'' . $operation->getName() . '\', array(' . $operation->getParamStringNoTypeHints() . '));' . PHP_EOL;
-
+            //
+            // build source
+            //
+            $returnType = ( $this->config->get('useOperationReturnType') ) ? $operation->getReturns() : '';
+            $source = '';
+            if( strlen($returnType) && $this->config->get('forceCaseOperationReturnType') ) {
+                $source = '  return ('.$returnType.') $this->__soapCall(\'' . $operation->getName() . '\', array(' . $operation->getParamStringNoTypeHints() . '));' . PHP_EOL;
+            }
+            else
+            {
+                $source = '  return $this->__soapCall(\'' . $operation->getName() . '\', array(' . $operation->getParamStringNoTypeHints() . '));' . PHP_EOL;
+            }
             $paramStr = $operation->getParamString($this->types);
-
+            
             $function = new PhpFunction('public', $name, $paramStr, $source, $comment,$returnType);
 
             if ($this->class->functionExists($function->getIdentifier()) == false) {
