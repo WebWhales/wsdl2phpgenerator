@@ -39,7 +39,7 @@ class PhpFunction extends PhpElement
      * @access private
      */
     private $returnType;
-
+    
     /**
      *
      * @param string $access
@@ -47,8 +47,9 @@ class PhpFunction extends PhpElement
      * @param string $params
      * @param string $source
      * @param PhpDocComment $comment
+     * @param string $returnType
      */
-    public function __construct($access, $identifier, $params, $source, PhpDocComment $comment = null, string $returnType)
+    public function __construct($access, $identifier, $params, $source, PhpDocComment $comment = null, string $returnType='')
     {
         $this->access = $access;
         $this->identifier = $identifier;
@@ -57,7 +58,7 @@ class PhpFunction extends PhpElement
         $this->comment = $comment;
         $this->returnType = $returnType;
     }
-
+    
     /**
      *
      * @return string Returns the complete source code for the function

@@ -205,10 +205,10 @@ class Service implements ClassGenerator
         foreach ($this->operations as $operation) {
             $name = Validator::validateOperation($operation->getName());
     
-            $returnType = PhpDocElementFactory::getReturn($operation->getReturns(), '');
+            $returnType = $operation->getReturns();
 
             $comment = new PhpDocComment($operation->getDescription());
-            $comment->setReturn($returnType);
+            $comment->setReturn(PhpDocElementFactory::getReturn($returnType, ''));
 
             foreach ($operation->getParams() as $param => $hint) {
                 $arr = $operation->getPhpDocParams($param, $this->types);
