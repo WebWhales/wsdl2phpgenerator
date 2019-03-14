@@ -153,7 +153,8 @@ class PhpClass extends PhpElement
             $ret .= ' extends ' . $this->extends;
         }
 
-        if ( $this->implements instanceof \Countable && count($this->implements) > 0) {
+//        if ( $this->implements instanceof \Countable && count($this->implements) > 0) {
+        if ( ( is_array( $this->implements ) || $this->implements instanceof \Countable ) && count($this->implements) > 0) {
             $ret .= ' implements ' . implode(', ', $this->implements);
         }
 
