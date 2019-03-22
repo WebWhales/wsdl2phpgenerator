@@ -87,7 +87,10 @@ class Config implements ConfigInterface
             'noServiceConstructor'          => false,
             // Add the return type for the operation methods in the Service class
             'useOperationReturnType'        => false,
-        ));
+            'operationAccessModifier'       => 'protected',
+            'operationPrefix'               => ''
+
+    ));
 
         // A set of configuration options names and normalizer callables.
         $normalizers = array(

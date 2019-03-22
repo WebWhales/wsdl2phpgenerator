@@ -216,6 +216,7 @@ class Service implements ClassGenerator
                 $comment->addParam(PhpDocElementFactory::getParam($arr['type'], $arr['name'], $arr['desc']));
             }
 
+
             //
             // build source
             //
@@ -229,8 +230,15 @@ class Service implements ClassGenerator
                 $source = '  return $this->__soapCall(\'' . $operation->getName() . '\', array(' . $operation->getParamStringNoTypeHints() . '));' . PHP_EOL;
             }
             $paramStr = $operation->getParamString($this->types);
-            
-            $function = new PhpFunction('public', $name, $paramStr, $source, $comment,$returnType);
+
+            //
+            // WW params
+            //
+            $operationAccessModifier = $this->config->get('operationAccessModifier', 'public');
+            $operationPrefix = $this->config->get('operationPrefix', '');
+            $name = $operationPrefix.$name;
+
+            $function = new PhpFunction($operationAccessModifier, $name, $paramStr, $source, $comment,$returnType);
 
             if ($this->class->functionExists($function->getIdentifier()) == false) {
                 $this->class->addFunction($function);
